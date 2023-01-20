@@ -1,12 +1,15 @@
 package aoc.day10;
 
-import aoc.day01.Day01;
+import aoc.day09.Day09;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 
 public class Day10Test {
@@ -14,34 +17,32 @@ public class Day10Test {
     @Test
     public void testPart1(){
         // Given
-        List<String> input = Collections.singletonList("test");
+        List<String> input = loadInput("day10test.txt");
 
         // When
-        String result = new Day01().part1(input);
+        String result = new Day10().part1(input);
 
         // Then
-        assertEquals(input.get(0), result);
+        assertEquals("13140", result);
     }
 
     @Test
     public void testPart2(){
         // Given
-        List<String> input = new ArrayList<>();
-        input.add("[({(<(())[]>[[{[]{<()<>>");
-        input.add("[(()[<>])]({[<{<<[]>>(");
-        input.add("{([(<{}[<>[]}>{[]{[(<()>");
-        input.add("(((({<>}<{<{<>}{[]{[]{}");
-        input.add("[[<[([]))<([[{}[[()]]]");
-        input.add("[{[{({}]{}}([{[{{{}}([]");
-        input.add("{<[[]]>}<{[{[{[]{()[[[]");
-        input.add("[<(<(<(<{}))><([]([]()");
-        input.add("<{([([[(<>()){}]>(<<{{");
-        input.add("<{([{{}}[<[[[<>{}]]]>[]]");
+        List<String> input = loadInput("day10test.txt");
 
         // When
         String result = new Day10().part2(input);
 
         // Then
-        assertEquals(String.valueOf(288957), result);
+        assertEquals("0", result);
+    }
+
+    private static List<String> loadInput(String fileName){
+        try(BufferedReader r = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream(fileName)))){
+            return r.lines().collect(toList());
+        } catch(IOException e){
+            throw new UncheckedIOException(e);
+        }
     }
 }

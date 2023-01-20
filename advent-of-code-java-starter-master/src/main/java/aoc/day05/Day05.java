@@ -2,99 +2,182 @@ package aoc.day05;
 
 import aoc.Day;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class Day05 implements Day {
 
     @Override
     public String part1(List<String> input) {
-        List<List<Integer>> filteredInput = input.stream()
-                .map(line -> Arrays.stream(String.join(",", line.split(" -> "))
-                        .split(","))
-                        .map(Integer::parseInt).collect(Collectors.toList()))
-                .filter(coordinates -> coordinates.get(0).equals(coordinates.get(2)) || coordinates.get(1).equals(coordinates.get(3)))
-                .collect(Collectors.toList());
-        Map<String, Integer> ventLocations = new HashMap<>();
-        for(List<Integer> line : filteredInput) {
-            int x1 = line.get(0) <= line.get(2) ? line.get(0) : line.get(2);
-            int x2 = x1 == line.get(0) ? line.get(2) : line.get(0);
-            int y1 = line.get(1) <= line.get(3) ? line.get(1) : line.get(3);
-            int y2 = y1 == line.get(1) ? line.get(3) : line.get(1);
-            if(x1 == x2) {
-                createVerticalLine(ventLocations, x1, y1, y2);
-            } else if (y1 == y2) {
-                createHorizontalLine(ventLocations, y1, x1, x2);
+        List<Stack<String>> stacksOfCrates = new ArrayList<>();
+        Stack<String> stackOne = new Stack<>();
+        stackOne.push("N");
+        stackOne.push("B");
+        stackOne.push("D");
+        stackOne.push("T");
+        stackOne.push("V");
+        stackOne.push("G");
+        stackOne.push("Z");
+        stackOne.push("J");
+        stacksOfCrates.add(stackOne);
+
+        Stack<String> stackTwo = new Stack<>();
+        stackTwo.push("S");
+        stackTwo.push("R");
+        stackTwo.push("M");
+        stackTwo.push("D");
+        stackTwo.push("W");
+        stackTwo.push("P");
+        stackTwo.push("F");
+        stacksOfCrates.add(stackTwo);
+
+        Stack<String> stackThree = new Stack<>();
+        stackThree.push("V");
+        stackThree.push("C");
+        stackThree.push("R");
+        stackThree.push("S");
+        stackThree.push("Z");
+        stacksOfCrates.add(stackThree);
+
+        Stack<String> stackFour = new Stack<>();
+        stackFour.push("R");
+        stackFour.push("T");
+        stackFour.push("J");
+        stackFour.push("Z");
+        stackFour.push("P");
+        stackFour.push("H");
+        stackFour.push("G");
+        stacksOfCrates.add(stackFour);
+
+        Stack<String> stackFive = new Stack<>();
+        stackFive.push("T");
+        stackFive.push("C");
+        stackFive.push("J");
+        stackFive.push("N");
+        stackFive.push("D");
+        stackFive.push("Z");
+        stackFive.push("Q");
+        stackFive.push("F");
+        stacksOfCrates.add(stackFive);
+
+        Stack<String> stackSix = new Stack<>();
+        stackSix.push("N");
+        stackSix.push("V");
+        stackSix.push("P");
+        stackSix.push("W");
+        stackSix.push("G");
+        stackSix.push("S");
+        stackSix.push("F");
+        stackSix.push("M");
+        stacksOfCrates.add(stackSix);
+
+        Stack<String> stackSeven = new Stack<>();
+        stackSeven.push("G");
+        stackSeven.push("C");
+        stackSeven.push("V");
+        stackSeven.push("B");
+        stackSeven.push("P");
+        stackSeven.push("Q");
+        stacksOfCrates.add(stackSeven);
+
+        Stack<String> stackEight = new Stack<>();
+        stackEight.push("Z");
+        stackEight.push("B");
+        stackEight.push("P");
+        stackEight.push("N");
+        stacksOfCrates.add(stackEight);
+
+        Stack<String> stackNine = new Stack<>();
+        stackNine.push("W");
+        stackNine.push("P");
+        stackNine.push("J");
+        stacksOfCrates.add(stackNine);
+
+
+//        Stack<String> stackOne = new Stack<>();
+//        stackOne.push("Z");
+//        stackOne.push("N");
+//        stacksOfCrates.add(stackOne);
+//
+//        Stack<String> stackTwo = new Stack<>();
+//        stackTwo.push("M");
+//        stackTwo.push("C");
+//        stackTwo.push("D");
+//        stacksOfCrates.add(stackTwo);
+//
+//        Stack<String> stackThree = new Stack<>();
+//        stackThree.push("P");
+//        stacksOfCrates.add(stackThree);
+
+//        number of blocks to move at index 5
+//        stack to move them from at index 12
+//        stack to move them to at index 17
+        for (int i = 0; i < input.size(); i++){
+            if(input.get(i).isBlank()){
+                for(int j = i+1; j < input.size(); j++) {
+                    String[] instruction = input.get(j).split(" ");
+                    Stack<String> stackToMoveFrom = stacksOfCrates.get(Integer.parseInt(instruction[3]) - 1);
+                    Stack<String> stackToMoveTo = stacksOfCrates.get(Integer.parseInt(instruction[5]) - 1);
+                    for (int k = 1; k <= Integer.parseInt(instruction[1]); k++) {
+                        stackToMoveTo.push(stackToMoveFrom.pop());
+                    }
+                }
+                break;
             }
         }
-        return String.valueOf(ventLocations.values().stream().reduce(0, (subtotal, number) -> number > 1 ? subtotal+1 : subtotal));
-    }
 
-    private void createVerticalLine(Map<String, Integer> ventLocations, int x, int y1, int y2) {
-        for (int y = y1; y <= y2; y++) {
-            String coordinate = x + "," + y;
-            ventLocations.put(coordinate, ventLocations.get(coordinate)==null ? 1 : ventLocations.get(coordinate) + 1);
-        }
-    }
-
-    private void createHorizontalLine(Map<String, Integer> ventLocations, int y, int x1, int x2) {
-        for (int x = x1; x <= x2; x++) {
-            String coordinate = x + "," + y;
-            ventLocations.put(coordinate, ventLocations.get(coordinate)==null ? 1 : ventLocations.get(coordinate) + 1);
-        }
+        return stacksOfCrates.stream().map(Stack::pop).reduce("", (tops, crate) -> tops + crate);
     }
 
     @Override
     public String part2(List<String> input) {
-        List<List<Integer>> formattedInput = input.stream()
-                .map(line -> Arrays.stream(String.join(",", line.split(" -> "))
-                        .split(","))
-                        .map(Integer::parseInt).collect(Collectors.toList()))
-                .collect(Collectors.toList());
-        Map<String, Integer> ventLocations = new HashMap<>();
-        for(List<Integer> line : formattedInput) {
-            int x1 = line.get(0);
-            int y1 = line.get(1);
-            int x2 = line.get(2);
-            int y2 = line.get(3);
-            if(x1 == x2 ) {
-                if(y1 < y2) {
-                    createVerticalLine(ventLocations, x1, y1, y2);
-                } else {
-                    createVerticalLine(ventLocations, x1, y2, y1);
-                }
-            } else if (y1 == y2) {
-                if (x1 < x2) {
-                    createHorizontalLine(ventLocations, y1, x1, x2);
-                } else {
-                    createHorizontalLine(ventLocations, y1, x2, x1);
-                }
-            } else {
-                createDiagonalLine(ventLocations, x1, y1, x2, y2);
-            }
 
-        }
-        return String.valueOf(ventLocations.values().stream().reduce(0, (subtotal, number) -> number > 1 ? subtotal+1 : subtotal));
-    }
+        List<String> stacksOfCrates = new ArrayList<>();
+//        String stackOne = "NZ";
+//        stacksOfCrates.add(stackOne);
+//        String stackTwo = "DCM";
+//        stacksOfCrates.add(stackTwo);
+//        String stackThree = "P";
+//        stacksOfCrates.add(stackThree);
+        stacksOfCrates.add("JZGVTDBN");
+        stacksOfCrates.add("FPWDMRS");
+        stacksOfCrates.add("ZSRCV");
+        stacksOfCrates.add("GHPZJTR");
+        stacksOfCrates.add("FQZDNJCT");
+        stacksOfCrates.add("MFSGWPVN");
+        stacksOfCrates.add("QPBVCG");
+        stacksOfCrates.add("NPBZ");
+        stacksOfCrates.add("JPW");
 
-    private void createDiagonalLine(Map<String, Integer> ventLocations, int x1, int y1, int x2, int y2) {
-        int firstX = Math.min(x1, x2);
-        int secondX = Math.max(x1, x2);
-        int firstY = firstX == x1 ? y1 : y2;
-        int secondY = secondX == x2 ? y2 : y1;
-        int y = firstY;
-        for (int x = firstX; x <= secondX; x++) {
-            String coordinate = x + "," + y;
-            ventLocations.put(coordinate, ventLocations.get(coordinate) == null ? 1 : ventLocations.get(coordinate) + 1);
-            if (firstY < secondY) {
-                y++;
-            } else {
-                y--;
+//        number of blocks to move at index 5
+//        stack to move them from at index 12
+//        stack to move them to at index 17
+        for (int i = 0; i < input.size(); i++){
+            if(input.get(i).isBlank()){
+                for(int j = i+1; j < input.size(); j++) {
+                    String[] instruction = input.get(j).split(" ");
+                    int numberStackToMoveFrom = Integer.parseInt(instruction[3]) - 1;
+                    int numberStackToMoveTo = Integer.parseInt(instruction[5]) - 1;
+                    int numberOfCratesToMove = Integer.parseInt(instruction[1]);
+                    String stackToMoveFrom = stacksOfCrates.get(numberStackToMoveFrom);
+                    String stackToMoveTo = stacksOfCrates.get(numberStackToMoveTo);
+
+                    String cratesToMove = numberOfCratesToMove < stackToMoveFrom.length() ? stackToMoveFrom.substring(0, numberOfCratesToMove) : stackToMoveFrom.substring(0);
+                    stacksOfCrates.remove(numberStackToMoveTo);
+                    stacksOfCrates.add(numberStackToMoveTo, cratesToMove + stackToMoveTo);
+
+                    stackToMoveFrom = numberOfCratesToMove < stackToMoveFrom.length() ? stackToMoveFrom.substring(numberOfCratesToMove) : "";
+                    stacksOfCrates.remove(numberStackToMoveFrom);
+                    stacksOfCrates.add(numberStackToMoveFrom, stackToMoveFrom);
+                }
+                break;
             }
         }
+
+        return stacksOfCrates.stream().reduce("", (tops, crate) -> tops + crate.charAt(0));
     }
 
 }

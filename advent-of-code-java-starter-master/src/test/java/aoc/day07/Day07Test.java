@@ -1,55 +1,41 @@
-package aoc.day22;
+package aoc.day07;
 
-import aoc.day17.Day17;
+import aoc.day10.Day10;
 import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 
-public class Day22Test {
+public class Day07Test {
 
     @Test
     public void testPart1(){
         // Given
-        List<String> input = new ArrayList<>();
-        input.add("");
+        List<String> input = loadInput("day07test.txt");
 
         // When
-        String result = new Day22().part1(input);
+        String result = new Day07().part1(input);
 
         // Then
-        assertEquals("", result);
+        assertEquals("95437", result);
     }
 
     @Test
     public void testPart2(){
         // Given
-        List<String> input = loadInput("day22test2.txt");
+        List<String> input = loadInput("day07test.txt");
 
         // When
-        String result = new Day22().part2(input);
+        String result = new Day07().part2(input);
 
         // Then
-        assertEquals("2758514936282235", result);
-    }
-
-    @Test
-    public void testPart2again(){
-        // Given
-        List<String> input = loadInput("day22test1.txt");
-
-        // When
-        String result = new Day22().part2(input);
-
-        // Then
-        assertEquals("39", result);
+        assertEquals("0", result);
     }
 
     private static List<String> loadInput(String fileName){
@@ -59,5 +45,4 @@ public class Day22Test {
             throw new UncheckedIOException(e);
         }
     }
-
 }

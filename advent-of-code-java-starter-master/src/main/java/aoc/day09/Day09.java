@@ -2,103 +2,151 @@ package aoc.day09;
 
 import aoc.Day;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 public class Day09 implements Day {
 
     @Override
     public String part1(List<String> input) {
-        List<List<Integer>> transformedInput = input.stream()
-                .map(line -> Arrays.stream(line
-                        .split(""))
-                        .map(Integer::parseInt)
-                        .collect(Collectors.toList()))
-                .collect(Collectors.toList());
-        int riskLevel = 0;
-        for (int i = 0; i < transformedInput.size(); i++) {
-            List<Integer> line = transformedInput.get(i);
-            for (int j = 0; j < line.size(); j++) {
-                int thisNumber = line.get(j);
-                if(i != 0 && thisNumber >= transformedInput.get(i-1).get(j)) continue;
-                if(i != transformedInput.size()-1 && thisNumber >= transformedInput.get(i+1).get(j)) continue;
-                if(j != 0 && thisNumber >= line.get(j-1)) continue;
-                if(j != line.size()-1 && thisNumber >= line.get(j+1)) continue;
-                riskLevel += thisNumber + 1;
+        Set<String> tailLocations = new HashSet<>();
+        tailLocations.add("0,0");
+        int hx = 0;
+        int hy = 0;
+        int tx = 0;
+        int ty = 0;
+        for (int i = 0; i < input.size(); i ++) {
+            String movement = input.get(i);
+            String direction = String.valueOf(movement.charAt(0));
+            int amount = Integer.parseInt(movement.substring(2));
+            if (direction.equals("R")) {
+                for (int j = 0; j < amount; j++) {
+                    hx++;
+                    if (hx - tx > 1) {
+                        tx++;
+                        if (hy - ty >= 1) {
+                            ty++;
+                        } else if (ty - hy >= 1) {
+                            ty--;
+                        }
+                        tailLocations.add(tx + "," + ty);
+                    }
+                }
+            } else if (direction.equals("L")) {
+                for (int j = 0; j < amount; j++) {
+                    hx--;
+                    if (tx - hx > 1) {
+                        tx--;
+                        if (hy - ty >= 1) {
+                            ty++;
+                        } else if (ty - hy >= 1) {
+                            ty--;
+                        }
+                        tailLocations.add(tx + "," + ty);
+                    }
+                }
+            } else if (direction.equals("U")) {
+                    for (int j = 0; j < amount; j++) {
+                        hy++;
+                        if (hy - ty > 1) {
+                            ty++;
+                            if (hx - tx >= 1) {
+                                tx++;
+                            } else if (tx - hx >= 1) {
+                                tx--;
+                            }
+                            tailLocations.add(tx + "," + ty);
+                        }
+                    }
+            } else if (direction.equals("D")) {
+                for (int j = 0; j < amount; j++) {
+                    hy--;
+                    if (ty - hy > 1) {
+                        ty--;
+                        if (hx - tx >= 1) {
+                            tx++;
+                        } else if (tx - hx >= 1) {
+                            tx--;
+                        }
+                        tailLocations.add(tx + "," + ty);
+                    }
+                }
             }
         }
-        return String.valueOf(riskLevel);
+        return String.valueOf(tailLocations.size());
     }
 
+    private class Coordinate {
+        int x;
+        int y;
+    }
     @Override
     public String part2(List<String> input) {
-        List<List<Location>> transformedInput = input.stream()
-                .map(line -> Arrays.stream(line
-                        .split(""))
-                        .map(Integer::parseInt)
-                        .map(Location::new)
-                        .collect(Collectors.toList()))
-                .collect(Collectors.toList());
-        List<int[]> lowPoints = new ArrayList<>();
-        for (int i = 0; i < transformedInput.size(); i++) {
-            List<Location> line = transformedInput.get(i);
-            for (int j = 0; j < line.size(); j++) {
-                int thisNumber = line.get(j).getVal();
-                if(i != 0 && thisNumber >= transformedInput.get(i-1).get(j).getVal()) continue;
-                if(i != transformedInput.size()-1 && thisNumber >= transformedInput.get(i+1).get(j).getVal()) continue;
-                if(j != 0 && thisNumber >= line.get(j-1).getVal()) continue;
-                if(j != line.size()-1 && thisNumber >= line.get(j+1).getVal()) continue;
-                lowPoints.add(new int[]{j, i});
-            }
-        }
-        int height = transformedInput.size();
-        int width = transformedInput.get(0).size();
-        List<Integer> basinSizes = new ArrayList<>();
-        for (int[] lowPoint : lowPoints) {
-            basinSizes.add(floodFill(transformedInput, lowPoint[0], lowPoint[1], 0, height, width));
-        }
-        List<Integer> sortedBasins =  basinSizes.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
-        return String.valueOf(sortedBasins.get(0) * sortedBasins.get(1) * sortedBasins.get(2));
-    }
+        Set<String> tailLocations = new HashSet<>();
+        tailLocations.add("0,0");
 
-    private int floodFill(List<List<Location>> input, int x, int y, int basinSize, int height, int width) {
-        if (x < 0 || x >= width || y < 0 || y >= height) return basinSize;
-        if (input.get(y).get(x).getVal() == 9 || input.get(y).get(x).isVisited()) return basinSize;
-        input.get(y).get(x).setVisited(true);
-        int newBasinSize = basinSize + 1;
-        newBasinSize = floodFill(input, x+1, y,  newBasinSize, height, width);
-        newBasinSize = floodFill(input, x-1, y,  newBasinSize, height, width);
-        newBasinSize = floodFill(input, x, y+1, newBasinSize, height, width);
-        newBasinSize = floodFill(input, x, y-1, newBasinSize, height, width);
-        return newBasinSize;
-    }
 
-    public class Location {
-        private boolean visited;
-        private final int val;
-
-        public Location(int val) {
-            this.visited = false;
-            this.val = val;
-        }
-
-        public boolean isVisited() {
-            return visited;
-        }
-
-        public void setVisited(boolean visited) {
-            this.visited = visited;
-        }
-
-        public int getVal() {
-            return val;
-        }
+//        for (int i = 0; i < input.size(); i ++) {
+//            String movement = input.get(i);
+//            String direction = String.valueOf(movement.charAt(0));
+//            int amount = Integer.parseInt(movement.substring(2));
+//            if (direction.equals("R")) {
+//                for (int j = 0; j < amount; j++) {
+//                    hx++;
+//                    if (hx - x1 > 1) {
+//                        x1++;
+//                        if (hy - y1 >= 1) {
+//                            y1++;
+//                        } else if (y1 - hy >= 1) {
+//                            y1--;
+//                        }
+//                        tailLocations.add(x9 + "," + y9);
+//                    }
+//                }
+//            } else if (direction.equals("L")) {
+//                for (int j = 0; j < amount; j++) {
+//                    hx--;
+//                    if (tx - hx > 1) {
+//                        tx--;
+//                        if (hy - ty >= 1) {
+//                            ty++;
+//                        } else if (ty - hy >= 1) {
+//                            ty--;
+//                        }
+//                        tailLocations.add(tx + "," + ty);
+//                    }
+//                }
+//            } else if (direction.equals("U")) {
+//                for (int j = 0; j < amount; j++) {
+//                    hy++;
+//                    if (hy - ty > 1) {
+//                        ty++;
+//                        if (hx - tx >= 1) {
+//                            tx++;
+//                        } else if (tx - hx >= 1) {
+//                            tx--;
+//                        }
+//                        tailLocations.add(tx + "," + ty);
+//                    }
+//                }
+//            } else if (direction.equals("D")) {
+//                for (int j = 0; j < amount; j++) {
+//                    hy--;
+//                    if (ty - hy > 1) {
+//                        ty--;
+//                        if (hx - tx >= 1) {
+//                            tx++;
+//                        } else if (tx - hx >= 1) {
+//                            tx--;
+//                        }
+//                        tailLocations.add(tx + "," + ty);
+//                    }
+//                }
+//            }
+//        }
+        return String.valueOf(tailLocations.size());
     }
 
 }

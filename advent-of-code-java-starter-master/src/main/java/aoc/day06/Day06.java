@@ -3,66 +3,60 @@ package aoc.day06;
 import aoc.Day;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Stack;
 
 public class Day06 implements Day {
 
     @Override
     public String part1(List<String> input) {
-        List<Integer> formattedInput = Arrays.stream(input.get(0).split(",")).map(Integer::parseInt).collect(Collectors.toList());
-        for (int i = 1; i <= 80; i++) {
-            int numOfNewSpawn = formattedInput.stream().reduce(0, (subtotal, number) -> number == 0 ? subtotal + 1 : subtotal);
-            formattedInput = formattedInput.stream().map(number -> number == 0 ? 6 : number - 1).collect(Collectors.toList());
-            for (int j = 1; j <= numOfNewSpawn; j++) {
-                formattedInput.add(8);
+        int beginningOfMessage = 0;
+        String message = input.get(0);
+        String window = message.substring(0,4);
+        for (int i = 4; i < message.length(); i++) {
+
+            if (window.replace(String.valueOf(window.charAt(0)),"").length() < 3 ||
+                    window.replace(String.valueOf(window.charAt(1)),"").length() < 3 ||
+                    window.replace(String.valueOf(window.charAt(2)),"").length() < 3) {
+                window = window.substring(1) + message.charAt(i);
+            } else {
+                beginningOfMessage = i;
+                break;
             }
         }
-        return String.valueOf(formattedInput.size());
+
+        return String.valueOf(beginningOfMessage);
     }
 
     @Override
     public String part2(List<String> input) {
-        List<List<Integer>> totalsAfterHalf = new ArrayList<>();
-        for (int i = 0; i < 9; i++) {
-            totalsAfterHalf.add(fishAfter128(i));
-        }
 
-        List<Integer> formattedInput = Arrays.stream(input.get(0).split(",")).map(Integer::parseInt).collect(Collectors.toList());
+        int beginningOfMessage = 0;
+        String message = input.get(0);
+        String window = message.substring(0,14);
+        for (int i = 14; i < message.length(); i++) {
 
-        List<Integer> startingTotals = new ArrayList<>();
-        for (int i = 0; i < 9; i++) {
-            int finalI = i;
-            startingTotals.add(formattedInput.stream().reduce(0, (subtotal, number) -> number == finalI ? subtotal + 1 : subtotal));
-        }
-
-        long totalFish = 0;
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j ++) {
-                totalFish += (long) startingTotals.get(i) * totalsAfterHalf.get(i).get(j) * totalsAfterHalf.get(j).stream().reduce(0, Integer::sum);
+            if (window.replace(String.valueOf(window.charAt(0)),"").length() < 13 ||
+                    window.replace(String.valueOf(window.charAt(1)),"").length() < 13 ||
+                    window.replace(String.valueOf(window.charAt(2)),"").length() < 13 ||
+                    window.replace(String.valueOf(window.charAt(3)),"").length() < 13 ||
+                    window.replace(String.valueOf(window.charAt(4)),"").length() < 13 ||
+                    window.replace(String.valueOf(window.charAt(5)),"").length() < 13 ||
+                    window.replace(String.valueOf(window.charAt(6)),"").length() < 13 ||
+                    window.replace(String.valueOf(window.charAt(7)),"").length() < 13 ||
+                    window.replace(String.valueOf(window.charAt(8)),"").length() < 13 ||
+                    window.replace(String.valueOf(window.charAt(9)),"").length() < 13 ||
+                    window.replace(String.valueOf(window.charAt(10)),"").length() < 13 ||
+                    window.replace(String.valueOf(window.charAt(11)),"").length() < 13 ||
+                    window.replace(String.valueOf(window.charAt(12)),"").length() < 13) {
+                window = window.substring(1) + message.charAt(i);
+            } else {
+                beginningOfMessage = i;
+                break;
             }
         }
 
-        return String.valueOf(totalFish);
-    }
-
-    private List<Integer> fishAfter128(int startingNumber) {
-        List<Integer> spawnAtHalfwayMark = new ArrayList<>();
-        spawnAtHalfwayMark.add(startingNumber);
-        for (int i = 1; i <= 128; i++) {
-            int numOfNewSpawn = spawnAtHalfwayMark.stream().reduce(0, (subtotal, number) -> number == 0 ? subtotal + 1 : subtotal);
-            spawnAtHalfwayMark = spawnAtHalfwayMark.stream().map(number -> number == 0 ? 6 : number - 1).collect(Collectors.toList());
-            for (int j = 1; j <= numOfNewSpawn; j++) {
-                spawnAtHalfwayMark.add(8);
-            }
-        }
-        List<Integer> fishAfter128 = new ArrayList<>();
-        for (int i = 0; i < 9; i++) {
-            int finalI = i;
-            fishAfter128.add(spawnAtHalfwayMark.stream().reduce(0, (subtotal, number) -> number == finalI ? subtotal + 1 : subtotal));
-        }
-        return fishAfter128;
+        return String.valueOf(beginningOfMessage);
     }
 
 }

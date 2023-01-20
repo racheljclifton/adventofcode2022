@@ -1,41 +1,41 @@
-package aoc.day01;
+package aoc.day05;
 
+import aoc.day04.Day04;
 import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 
-public class Day01Test {
+public class Day05Test {
 
     @Test
     public void testPart1(){
         // Given
-        List<String> input = loadInput("day01test.txt");
+        List<String> input = loadInput("day05test.txt");
 
         // When
-        String result = new Day01().part1(input);
+        String result = new Day05().part1(input);
 
         // Then
-        assertEquals("24000", result);
+        assertEquals("CMZ", result);
     }
 
     @Test
     public void testPart2(){
         // Given
-        List<String> input = loadInput("day01test.txt");
+        List<String> input = loadInput("day05test.txt");
 
         // When
-        String result = new Day01().part2(input);
+        String result = new Day05().part2(input);
 
         // Then
-        assertEquals("45000", result);
+        assertEquals("MCD", result);
     }
 
     private static List<String> loadInput(String fileName){
